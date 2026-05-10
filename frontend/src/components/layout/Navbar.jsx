@@ -1,4 +1,5 @@
 import { Bell, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
     return (
@@ -33,7 +34,7 @@ function Navbar() {
                     <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
                 </button>
 
-                <div className="flex items-center gap-3">
+                <Link to="/settings" className="flex items-center gap-3 hover:bg-slate-50 p-2 rounded-2xl transition cursor-pointer">
                     <img
                         src="https://i.pravatar.cc/100"
                         alt="profile"
@@ -47,7 +48,7 @@ function Navbar() {
 
                         <p className="text-sm text-slate-500">Traveler</p>
                     </div>
-                </div>
+                </Link>
             </div>
         </header>
     );
