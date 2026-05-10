@@ -4,7 +4,10 @@ import TripCard from "../../components/cards/TripCard";
 
 import mockTrips from "../../constants/mockTrips";
 
+import { useNavigate } from "react-router-dom";
+
 function MyTripsPage() {
+    const navigate = useNavigate();
     return (
         <MainLayout>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-10">
@@ -19,6 +22,7 @@ function MyTripsPage() {
                 </div>
 
                 <button
+                    onClick={() => navigate("/create-trip")}
                     className="
             bg-emerald-500
             hover:bg-emerald-600

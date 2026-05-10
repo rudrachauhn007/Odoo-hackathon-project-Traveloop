@@ -19,6 +19,10 @@ import CreateTripPage from "../pages/trips/CreateTripPage";
 
 import TripDetailsPage from "../pages/trips/TripDetailsPage";
 
+import CitySearchPage from "../pages/itinerary/CitySearchPage";
+
+import ActivitySearchPage from "../pages/itinerary/ActivitySearchPage";
+
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -34,7 +38,10 @@ function AppRoutes() {
                 <Route path="/create-trip" element={<CreateTripPage />} />
                 <Route path="/trip/:id" element={<TripDetailsPage />} />
 
+                {/* Itinerary Routes */}
                 <Route path="/itinerary" element={<ItineraryPage />} />
+                <Route path="/cities" element={<CitySearchPage />} />
+                <Route path="/activities" element={<ActivitySearchPage />} />
 
                 <Route path="/budget" element={<BudgetPage />} />
 
