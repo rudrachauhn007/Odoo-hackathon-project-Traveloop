@@ -122,7 +122,7 @@ function PackingChecklistPage() {
 
                     <div>
                         <h1 className="text-5xl font-bold">
-                            Packing Checklist 🎒
+                            Packing Checklist 
                         </h1>
 
                         <p className="text-slate-500 text-lg mt-2">

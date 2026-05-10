@@ -95,7 +95,7 @@ function DashboardPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
                 <div>
                     <h1 className="text-5xl font-bold text-slate-900 mb-3">
-                        Welcome Back 👋
+                        Welcome Back 
                     </h1>
 
                     <p className="text-slate-500 text-lg">

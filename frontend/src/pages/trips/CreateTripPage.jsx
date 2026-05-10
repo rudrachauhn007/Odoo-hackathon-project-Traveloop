@@ -75,7 +75,7 @@ function CreateTripPage() {
             <div className="max-w-4xl mx-auto">
                 <div className="mb-10">
                     <h1 className="text-5xl font-bold text-slate-900 mb-3">
-                        Create New Trip 🌍
+                        Create New Trip 
                     </h1>
 
                     <p className="text-slate-500 text-lg">

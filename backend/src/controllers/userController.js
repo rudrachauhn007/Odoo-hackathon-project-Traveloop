@@ -12,6 +12,7 @@ export const getCurrentUser = async (req, res) => {
                 email: req.user.email,
                 profileImage: req.user.profileImage,
                 bio: req.user.bio,
+                role: req.user.role,
             },
         });
     } catch (error) {

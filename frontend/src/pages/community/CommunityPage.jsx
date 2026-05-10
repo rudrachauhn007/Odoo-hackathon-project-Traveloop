@@ -67,7 +67,7 @@ function CommunityPage() {
     return (
         <MainLayout>
             <div className="mb-10">
-                <h1 className="text-5xl font-bold mb-3">Travel Community 🌎</h1>
+                <h1 className="text-5xl font-bold mb-3">Travel Community </h1>
 
                 <p className="text-slate-500 text-lg">
                     Explore itineraries shared by travelers around the world.

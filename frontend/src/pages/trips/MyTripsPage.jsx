@@ -29,7 +29,7 @@ function MyTripsPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-10">
                 <div>
                     <h1 className="text-5xl font-bold text-slate-900 mb-3">
-                        My Trips ✈️
+                        My Trips 
                     </h1>
 
                     <p className="text-slate-500 text-lg">

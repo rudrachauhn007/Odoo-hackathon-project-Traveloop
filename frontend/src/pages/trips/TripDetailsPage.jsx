@@ -15,6 +15,7 @@ function TripDetailsPage() {
     const [trip, setTrip] = useState(null);
     const [stops, setStops] = useState([]);
     const [analytics, setAnalytics] = useState(null);
+    const [updatingVisibility, setUpdatingVisibility] = useState(false);
 
     useEffect(() => {
         fetchTripDetails();
@@ -39,6 +40,20 @@ function TripDetailsPage() {
             console.log(error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleVisibilityToggle = async () => {
+        try {
+            setUpdatingVisibility(true);
+
+            const res = await api.patch(`/community/visibility/${trip.id}`);
+
+            setTrip(res.data.trip);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setUpdatingVisibility(false);
         }
     };
 
@@ -150,26 +165,46 @@ function TripDetailsPage() {
                     </p>
                 </div>
 
-                <button
-                    onClick={() => navigate(`/itinerary`)}
-                    className="
-                        bg-emerald-500
-                        hover:bg-emerald-600
-                        text-white
-                        px-6
-                        py-4
-                        rounded-2xl
-                        font-semibold
-                        flex
-                        items-center
-                        justify-center
-                        gap-3
-                        transition
-                    "
-                >
-                    <Pencil size={18} />
-                    Edit Trip
-                </button>
+                <div className="flex gap-4">
+                    <button
+                        onClick={handleVisibilityToggle}
+                        disabled={updatingVisibility}
+                        className={`
+            px-6
+            py-4
+            rounded-2xl
+            font-semibold
+            text-white
+            transition
+
+            ${
+                trip.isPublic
+                    ? "bg-slate-700 hover:bg-slate-800"
+                    : "bg-emerald-500 hover:bg-emerald-600"
+            }
+        `}
+                    >
+                        {updatingVisibility
+                            ? "Updating..."
+                            : trip.isPublic
+                              ? "Make Private"
+                              : "Make Public"}
+                    </button>
+
+                    <button
+                        className="
+            bg-emerald-500
+            hover:bg-emerald-600
+            text-white
+            px-6
+            py-4
+            rounded-2xl
+            font-semibold
+        "
+                    >
+                        Edit Trip
+                    </button>
+                </div>
             </div>
 
             {/* STATS */}

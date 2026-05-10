@@ -81,7 +81,7 @@ function ActivitySearchPage() {
                     </div>
 
                     <div>
-                        <h1 className="text-5xl font-bold">Activities 🎯</h1>
+                        <h1 className="text-5xl font-bold">Activities </h1>
 
                         <p className="text-slate-500 text-lg mt-2">
                             Add unforgettable experiences to your journey.
@@ -151,7 +151,7 @@ function ActivitySearchPage() {
                                         transition
                                     "
                             >
-                                ✨ {activity.title}
+                                 {activity.title}
                             </button>
                         ))}
                     </div>

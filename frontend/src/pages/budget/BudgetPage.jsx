@@ -120,7 +120,7 @@ function BudgetPage() {
             {/* HEADER */}
             <div className="mb-10">
                 <h1 className="text-5xl font-bold text-slate-900 mb-3">
-                    Budget Dashboard 💰
+                    Budget Dashboard 
                 </h1>
 
                 <p className="text-slate-500 text-lg">
