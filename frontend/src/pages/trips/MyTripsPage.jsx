@@ -1,13 +1,29 @@
 import MainLayout from "../../layout/MainLayout";
 
 import TripCard from "../../components/cards/TripCard";
+import api from "../../lib/axios";
 
 import mockTrips from "../../constants/mockTrips";
-
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function MyTripsPage() {
     const navigate = useNavigate();
+    const [trips, setTrips] = useState([]);
+
+    useEffect(() => {
+        fetchTrips();
+    }, []);
+
+    const fetchTrips = async () => {
+        try {
+            const res = await api.get("/trips");
+
+            setTrips(res.data.trips);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <MainLayout>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-10">
@@ -40,7 +56,7 @@ function MyTripsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {mockTrips.map((trip) => (
+                {trips.map((trip) => (
                     <TripCard key={trip.id} trip={trip} />
                 ))}
             </div>

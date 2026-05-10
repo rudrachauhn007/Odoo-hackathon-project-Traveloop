@@ -1,9 +1,16 @@
-const express = require("express");
+import express from "express";
+import protect from "../middlewares/authMiddleware.js";
+import upload from "../middlewares/uploadMiddleware.js";
+import {
+    createTrip,
+    getUserTrips,
+    getTripById,
+} from "../controllers/tripController.js";
+
 const router = express.Router();
-const { createNewTrip } = require("../controllers/tripController");
-const auth = require("../middleware/auth"); // JWT Middleware
 
-// Requirement: Form to initiate a new trip [cite: 37]
-router.post("/", auth, createNewTrip);
+router.post("/", protect, upload.single("coverImage"), createTrip);
+router.get("/", protect, getUserTrips);
+router.get("/:id", protect, getTripById);
 
-module.exports = router;
+export default router;

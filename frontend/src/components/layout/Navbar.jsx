@@ -1,4 +1,5 @@
 import { Bell, Search } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 
 function Navbar() {
     return (
@@ -27,11 +28,7 @@ function Navbar() {
             </div>
 
             <div className="flex items-center gap-5 ml-6">
-                <button className="relative">
-                    <Bell className="text-slate-600" />
-
-                    <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-                </button>
+                <NotificationBell />
 
                 <div className="flex items-center gap-3">
                     <img

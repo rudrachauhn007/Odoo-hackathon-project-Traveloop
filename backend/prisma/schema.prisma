@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+
+  fullName      String
+
+  email         String   @unique
+
+  password      String
+
+  profileImage  String?
+
+  bio           String?
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+
+  trips         Trip[]
+
+  likes TripLike[]
+
+  role String @default("user")
+
+  notifications Notification[]
+}
+
+model Trip {
+  id            String   @id @default(cuid())
+
+  title         String
+
+  description   String?
+
+  coverImage    String?
+
+  startDate     DateTime
+
+  endDate       DateTime
+
+  budget        Float?
+
+  isPublic      Boolean @default(false)
+
+  likesCount    Int @default(0)
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+
+  user          User @relation(fields: [userId], references: [id])
+
+  stops         Stop[]
+
+  notes         Note[]
+
+  checklist     ChecklistItem[]
+
+  likes         TripLike[]
+
+  expenses Expense[]
+}
+
+model Stop {
+  id            String   @id @default(cuid())
+
+  city          String
+
+  country       String?
+
+  arrivalDate   DateTime
+
+  departureDate DateTime
+
+  order         Int
+
+  tripId        String
+
+  trip          Trip @relation(fields: [tripId], references: [id])
+
+  activities    Activity[]
+}
+
+model Activity {
+  id            String   @id @default(cuid())
+
+  title         String
+
+  description   String?
+
+  category      String?
+
+  cost          Float?
+
+  startTime     DateTime?
+
+  stopId        String
+
+  stop          Stop @relation(fields: [stopId], references: [id])
+}
+
+model Note {
+  id            String   @id @default(cuid())
+
+  content       String
+
+  createdAt     DateTime @default(now())
+
+  tripId        String
+
+  trip          Trip @relation(fields: [tripId], references: [id])
+}
+
+model ChecklistItem {
+  id            String   @id @default(cuid())
+
+  label         String
+
+  checked       Boolean @default(false)
+
+  tripId        String
+
+  trip          Trip @relation(fields: [tripId], references: [id])
+}
+
+model TripLike {
+  id        String   @id @default(cuid())
+
+  userId    String
+
+  tripId    String
+
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id])
+
+  trip      Trip @relation(fields: [tripId], references: [id])
+
+  @@unique([userId, tripId])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+
+  title       String
+
+  amount      Float
+
+  category    String
+
+  spentAt     DateTime @default(now())
+
+  createdAt   DateTime @default(now())
+
+  tripId      String
+
+  trip        Trip @relation(fields: [tripId], references: [id])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+
+  title       String
+
+  message     String
+
+  type        String
+
+  isRead      Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+
+  userId      String
+
+  user        User @relation(fields: [userId], references: [id])
+}

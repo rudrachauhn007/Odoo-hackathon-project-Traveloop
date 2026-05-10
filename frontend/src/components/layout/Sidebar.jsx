@@ -6,8 +6,9 @@ import {
     NotebookPen,
     Settings,
     ShieldCheck,
+    Users,
+    Backpack,
 } from "lucide-react";
-
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
@@ -21,6 +22,7 @@ const menuItems = [
         icon: Plane,
         path: "/trips",
     },
+
     {
         title: "Itinerary",
         icon: MapPinned,
@@ -32,9 +34,19 @@ const menuItems = [
         path: "/budget",
     },
     {
+        title: "Checklist",
+        icon: Backpack,
+        path: "/packing",
+    },
+    {
         title: "Notes",
         icon: NotebookPen,
         path: "/notes",
+    },
+    {
+        title: "Community",
+        icon: Users,
+        path: "/community",
     },
     {
         title: "Settings",

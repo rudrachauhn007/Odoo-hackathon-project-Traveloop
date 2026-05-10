@@ -34,7 +34,7 @@ function TripCard({ trip }) {
                 <div className="flex items-start gap-2 text-slate-500 mb-4">
                     <MapPin size={18} className="mt-1" />
 
-                    <p>{trip.destinations.join(" • ")}</p>
+                    <p>{trip.stops?.map((stop) => stop.city).join(" • ")}</p>
                 </div>
 
                 <div className="flex items-center justify-between">
