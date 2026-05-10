@@ -23,6 +23,12 @@ import CitySearchPage from "../pages/itinerary/CitySearchPage";
 
 import ActivitySearchPage from "../pages/itinerary/ActivitySearchPage";
 
+import PackingChecklistPage from "../pages/trips/PackingChecklistPage";
+
+import NotesPage from "../pages/trips/NotesPage";
+
+import PublicItineraryPage from "../pages/shared/PublicItineraryPage";
+
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -42,12 +48,18 @@ function AppRoutes() {
                 <Route path="/itinerary" element={<ItineraryPage />} />
                 <Route path="/cities" element={<CitySearchPage />} />
                 <Route path="/activities" element={<ActivitySearchPage />} />
+                <Route path="/shared-trip" element={<PublicItineraryPage />} />
 
                 <Route path="/budget" element={<BudgetPage />} />
 
                 <Route path="/settings" element={<SettingsPage />} />
 
                 <Route path="/admin" element={<AdminPage />} />
+
+                <Route path="/packing" element={<PackingChecklistPage />} />
+
+                <Route path="/notes" element={<NotesPage />} />
+
             </Routes>
         </BrowserRouter>
     );
