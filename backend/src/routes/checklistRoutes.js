@@ -14,6 +14,6 @@ router.post("/:tripId", protect, addChecklistItem);
 
 router.get("/:tripId", protect, getChecklist);
 
-router.patch("/toggle/:itemId", protect, toggleChecklistItem);
+router.patch("/:itemId", protect, toggleChecklistItem);
 
 export default router;

@@ -51,6 +51,7 @@ function LoginPage() {
                     <input
                         name="email"
                         onChange={handleChange}
+                        value={formData.email}
                         type="email"
                         placeholder="Email"
                         className="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-400"
@@ -59,6 +60,7 @@ function LoginPage() {
                     <input
                         name="password"
                         onChange={handleChange}
+                        value={formData.password}
                         type="password"
                         placeholder="Password"
                         className="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-400"

@@ -1,5 +1,6 @@
 import { Bell, Search } from "lucide-react";
 import NotificationBell from "./NotificationBell";
+import { Link } from "react-router-dom";
 
 function Navbar() {
     return (
@@ -30,7 +31,7 @@ function Navbar() {
             <div className="flex items-center gap-5 ml-6">
                 <NotificationBell />
 
-                <div className="flex items-center gap-3">
+                <Link to={"/settings"} className="flex items-center gap-3">
                     <img
                         src="https://i.pravatar.cc/100"
                         alt="profile"

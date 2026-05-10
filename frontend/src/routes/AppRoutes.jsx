@@ -54,7 +54,7 @@ function AppRoutes() {
                     }
                 />
                 <Route
-                    path="/trip/:tripId"
+                    path="/trips/:tripId"
                     element={
                         <ProtectedRoute>
                             <TripDetailsPage />

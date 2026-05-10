@@ -10,15 +10,10 @@ import { CalendarDays, IndianRupee, MapPin, Pencil, Globe } from "lucide-react";
 
 function TripDetailsPage() {
     const { tripId } = useParams();
-
     const navigate = useNavigate();
-
     const [loading, setLoading] = useState(true);
-
     const [trip, setTrip] = useState(null);
-
     const [stops, setStops] = useState([]);
-
     const [analytics, setAnalytics] = useState(null);
 
     useEffect(() => {
@@ -112,7 +107,7 @@ function TripDetailsPage() {
                     className="
                         h-80
                         rounded-3xl
-                        bg-gradient-to-r
+                        bg-linear-to-r
                         from-emerald-400
                         to-teal-400
                         mb-10

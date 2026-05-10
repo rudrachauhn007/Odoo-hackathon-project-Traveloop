@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
-
 import MainLayout from "../../layout/MainLayout";
 
 import api from "../../lib/axios";
 
 function ItineraryPage() {
-    const { tripId } = useParams();
-
+    const [trips, setTrips] = useState([]);
+    const [selectedTrip, setSelectedTrip] = useState("");
     const [loading, setLoading] = useState(true);
-
     const [stops, setStops] = useState([]);
-
     const [showStopForm, setShowStopForm] = useState(false);
-
     const [newStop, setNewStop] = useState({
         city: "",
         country: "",
@@ -25,12 +20,34 @@ function ItineraryPage() {
     const [activityInputs, setActivityInputs] = useState({});
 
     useEffect(() => {
-        fetchStops();
-    }, [tripId]);
+        fetchTrips();
+    }, []);
+
+    useEffect(() => {
+        if (selectedTrip) {
+            fetchStops();
+        }
+    }, [selectedTrip]);
+
+    const fetchTrips = async () => {
+        try {
+            const res = await api.get("/trips");
+
+            setTrips(res.data.trips);
+
+            if (res.data.trips.length > 0) {
+                setSelectedTrip(res.data.trips[0].id);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const fetchStops = async () => {
         try {
-            const res = await api.get(`/stops/${tripId}`);
+            setLoading(true);
+
+            const res = await api.get(`/stops/${selectedTrip}`);
 
             setStops(res.data.stops);
         } catch (error) {
@@ -49,7 +66,9 @@ function ItineraryPage() {
 
     const handleAddStop = async () => {
         try {
-            await api.post(`/stops/${tripId}`, {
+            if (!newStop.city || !newStop.country) return;
+
+            await api.post(`/stops/${selectedTrip}`, {
                 ...newStop,
 
                 order: stops.length + 1,
@@ -127,34 +146,18 @@ function ItineraryPage() {
     return (
         <MainLayout>
             {/* HEADER */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-12">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
                 <div>
                     <h1 className="text-5xl font-bold text-slate-900 mb-3">
                         Itinerary Builder 🗺️
                     </h1>
 
                     <p className="text-slate-500 text-lg">
-                        Organize your trip day by day and track it on the live map.
+                        Organize your trip day by day.
                     </p>
                 </div>
 
                 <div className="flex gap-4">
-                    <button
-                        className="
-                            border
-                            border-slate-200
-                            bg-white
-                            hover:bg-slate-100
-                            px-5
-                            py-3
-                            rounded-2xl
-                            font-medium
-                            transition
-                        "
-                    >
-                        Timeline View
-                    </button>
-
                     <button
                         onClick={() => setShowStopForm(!showStopForm)}
                         className="
@@ -171,6 +174,32 @@ function ItineraryPage() {
                         + Add Stop
                     </button>
                 </div>
+            </div>
+
+            {/* TRIP SELECT */}
+            <div className="mb-8">
+                <select
+                    value={selectedTrip}
+                    onChange={(e) => setSelectedTrip(e.target.value)}
+                    className="
+                        bg-white
+                        border
+                        border-slate-200
+                        rounded-2xl
+                        px-5
+                        py-4
+                        outline-none
+                        focus:ring-2
+                        focus:ring-emerald-400
+                        min-w-70
+                    "
+                >
+                    {trips.map((trip) => (
+                        <option key={trip.id} value={trip.id}>
+                            {trip.title}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             {/* ADD STOP FORM */}
@@ -294,7 +323,7 @@ function ItineraryPage() {
                     </h2>
 
                     <p className="text-slate-500">
-                        Start building your itinerary by adding destinations.
+                        Start building your itinerary.
                     </p>
                 </div>
             ) : (
@@ -311,26 +340,14 @@ function ItineraryPage() {
                                 "
                         >
                             {/* HEADER */}
-                            <div className="flex items-center justify-between mb-8">
-                                <div>
-                                    <p className="text-sm text-emerald-600 font-medium mb-2">
-                                        Day {index + 1}
-                                    </p>
+                            <div className="mb-8">
+                                <p className="text-sm text-emerald-600 font-medium mb-2">
+                                    Day {index + 1}
+                                </p>
 
-                                    <h2 className="text-3xl font-bold">
-                                        {stop.city}, {stop.country}
-                                    </h2>
-
-                                    <p className="text-slate-500 mt-2">
-                                        {new Date(
-                                            stop.arrivalDate,
-                                        ).toLocaleDateString()}{" "}
-                                        →{" "}
-                                        {new Date(
-                                            stop.departureDate,
-                                        ).toLocaleDateString()}
-                                    </p>
-                                </div>
+                                <h2 className="text-3xl font-bold">
+                                    {stop.city}, {stop.country}
+                                </h2>
                             </div>
 
                             {/* ACTIVITIES */}
@@ -351,7 +368,7 @@ function ItineraryPage() {
                                         </p>
                                     </div>
                                 ) : (
-                                    stop.activities.map((activity) => (
+                                    stop.activities?.map((activity) => (
                                         <div
                                             key={activity.id}
                                             className="
@@ -361,25 +378,19 @@ function ItineraryPage() {
                                                         p-5
                                                     "
                                         >
-                                            <div className="flex items-center justify-between">
-                                                <div>
-                                                    <h3 className="font-semibold text-lg">
-                                                        {activity.title}
-                                                    </h3>
+                                            <h3 className="font-semibold text-lg">
+                                                {activity.title}
+                                            </h3>
 
-                                                    <p className="text-slate-500 text-sm mt-1">
-                                                        {activity.category}
-                                                    </p>
+                                            <p className="text-slate-500 text-sm mt-1">
+                                                {activity.category}
+                                            </p>
 
-                                                    {activity.description && (
-                                                        <p className="text-slate-600 mt-3">
-                                                            {
-                                                                activity.description
-                                                            }
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
+                                            {activity.description && (
+                                                <p className="text-slate-600 mt-3">
+                                                    {activity.description}
+                                                </p>
+                                            )}
                                         </div>
                                     ))
                                 )}

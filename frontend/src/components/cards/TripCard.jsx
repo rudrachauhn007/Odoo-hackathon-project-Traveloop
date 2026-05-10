@@ -1,6 +1,8 @@
 import { MapPin, Wallet } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function TripCard({ trip }) {
+    const Navigate = useNavigate();
     return (
         <div
             className="
@@ -45,6 +47,7 @@ function TripCard({ trip }) {
                     </div>
 
                     <button
+                    onClick={() => Navigate(`/trips/${trip.id}`)}
                         className="
               bg-emerald-500
               hover:bg-emerald-600

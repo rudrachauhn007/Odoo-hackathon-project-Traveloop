@@ -2,7 +2,7 @@ import prisma from "../config/prisma.js";
 
 export const addChecklistItem = async (req, res) => {
     try {
-        const { label } = req.body;
+     const { title } = req.body;
 
         const trip = await prisma.trip.findFirst({
             where: {
@@ -20,7 +20,7 @@ export const addChecklistItem = async (req, res) => {
 
         const item = await prisma.checklistItem.create({
             data: {
-                label,
+                label: title,
                 tripId: trip.id,
             },
         });
@@ -30,6 +30,8 @@ export const addChecklistItem = async (req, res) => {
             item,
         });
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             success: false,
             message: error.message,

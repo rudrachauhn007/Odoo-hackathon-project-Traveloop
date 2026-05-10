@@ -66,48 +66,63 @@ export const getTripBudgetAnalytics = async (req, res) => {
 
 export const getDashboardStats = async (req, res) => {
     try {
-        const totalTrips = await prisma.trip.count({
+        const trips = await prisma.trip.findMany({
             where: {
                 userId: req.user.id,
             },
-        });
 
-        const totalExpenses = await prisma.expense.findMany({
-            where: {
-                trip: {
-                    userId: req.user.id,
-                },
+            include: {
+                expenses: true,
+
+                stops: true,
             },
         });
 
-        const totalSpent = totalExpenses.reduce(
-            (sum, expense) => sum + expense.amount,
-            0,
-        );
+        const totalTrips = trips.length;
 
-        const publicTrips = await prisma.trip.count({
-            where: {
-                userId: req.user.id,
-                isPublic: true,
-            },
+        const upcomingTrips = trips.filter(
+            (trip) => new Date(trip.startDate) > new Date(),
+        ).length;
+
+        const countries = new Set();
+
+        trips.forEach((trip) => {
+            trip.stops?.forEach((stop) => {
+                if (stop.country) {
+                    countries.add(stop.country);
+                }
+            });
+        });
+
+        const countriesVisited = countries.size;
+
+        let totalSpent = 0;
+
+        trips.forEach((trip) => {
+            trip.expenses?.forEach((expense) => {
+                totalSpent += expense.amount || 0;
+            });
         });
 
         res.status(200).json({
             success: true,
 
-            stats: {
+            analytics: {
                 totalTrips,
 
+                upcomingTrips,
+
+                countriesVisited,
+
                 totalSpent,
-
-                publicTrips,
-
-                totalExpenseEntries: totalExpenses.length,
             },
         });
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             success: false,
+
             message: error.message,
         });
     }

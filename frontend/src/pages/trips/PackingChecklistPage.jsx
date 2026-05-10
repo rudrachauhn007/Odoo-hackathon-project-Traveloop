@@ -9,6 +9,8 @@ import { Backpack, Plus, Trash2 } from "lucide-react";
 function PackingChecklistPage() {
     const [loading, setLoading] = useState(true);
 
+    const [saving, setSaving] = useState(false);
+
     const [trips, setTrips] = useState([]);
 
     const [selectedTrip, setSelectedTrip] = useState("");
@@ -35,9 +37,13 @@ function PackingChecklistPage() {
 
             if (res.data.trips.length > 0) {
                 setSelectedTrip(res.data.trips[0].id);
+            } else {
+                setLoading(false);
             }
         } catch (error) {
             console.log(error);
+
+            setLoading(false);
         }
     };
 
@@ -59,6 +65,8 @@ function PackingChecklistPage() {
         try {
             if (!newItem.trim()) return;
 
+            setSaving(true);
+
             await api.post(`/checklist/${selectedTrip}`, {
                 title: newItem,
             });
@@ -68,6 +76,8 @@ function PackingChecklistPage() {
             fetchChecklist();
         } catch (error) {
             console.log(error);
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -122,94 +132,8 @@ function PackingChecklistPage() {
                 </div>
             </div>
 
-            {/* SELECT TRIP */}
-            <div className="mb-8">
-                <select
-                    value={selectedTrip}
-                    onChange={(e) => setSelectedTrip(e.target.value)}
-                    className="
-                        bg-white
-                        border
-                        border-slate-200
-                        rounded-2xl
-                        px-5
-                        py-4
-                        outline-none
-                        focus:ring-2
-                        focus:ring-emerald-400
-                        min-w-[280px]
-                    "
-                >
-                    {trips.map((trip) => (
-                        <option key={trip.id} value={trip.id}>
-                            {trip.title}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {/* ADD ITEM */}
-            <div
-                className="
-                    bg-white
-                    border
-                    border-slate-200
-                    rounded-3xl
-                    p-6
-                    mb-8
-                    max-w-4xl
-                "
-            >
-                <div className="flex flex-col md:flex-row gap-4">
-                    <input
-                        type="text"
-                        value={newItem}
-                        onChange={(e) => setNewItem(e.target.value)}
-                        placeholder="Add checklist item..."
-                        className="
-                            flex-1
-                            border
-                            border-slate-200
-                            rounded-2xl
-                            px-5
-                            py-4
-                            outline-none
-                            focus:ring-2
-                            focus:ring-emerald-400
-                        "
-                    />
-
-                    <button
-                        onClick={handleAddItem}
-                        className="
-                            bg-emerald-500
-                            hover:bg-emerald-600
-                            text-white
-                            px-6
-                            py-4
-                            rounded-2xl
-                            font-medium
-                            flex
-                            items-center
-                            justify-center
-                            gap-2
-                            transition
-                        "
-                    >
-                        <Plus size={18} />
-                        Add Item
-                    </button>
-                </div>
-            </div>
-
-            {/* LOADING */}
-            {loading ? (
-                <div className="py-20 text-center">
-                    <p className="text-slate-500 text-lg">
-                        Loading checklist...
-                    </p>
-                </div>
-            ) : items.length === 0 ? (
+            {/* EMPTY TRIPS */}
+            {trips.length === 0 ? (
                 <div
                     className="
                         bg-white
@@ -218,87 +142,204 @@ function PackingChecklistPage() {
                         rounded-3xl
                         p-16
                         text-center
-                        max-w-4xl
                     "
                 >
-                    <h2 className="text-3xl font-bold mb-4">Checklist Empty</h2>
+                    <h2 className="text-3xl font-bold mb-4">No Trips Found</h2>
 
                     <p className="text-slate-500">
-                        Add travel essentials for your trip.
+                        Create a trip first to manage your packing checklist.
                     </p>
                 </div>
             ) : (
-                <div
-                    className="
-                        bg-white
-                        border
-                        border-slate-200
-                        rounded-3xl
-                        p-8
-                        max-w-4xl
-                    "
-                >
-                    <div className="space-y-4">
-                        {items.map((item) => (
-                            <div
-                                key={item.id}
+                <>
+                    {/* SELECT TRIP */}
+                    <div className="mb-8">
+                        <select
+                            value={selectedTrip}
+                            onChange={(e) => setSelectedTrip(e.target.value)}
+                            className="
+                                bg-white
+                                border
+                                border-slate-200
+                                rounded-2xl
+                                px-5
+                                py-4
+                                outline-none
+                                focus:ring-2
+                                focus:ring-emerald-400
+                                min-w-[280px]
+                            "
+                        >
+                            {trips.map((trip) => (
+                                <option key={trip.id} value={trip.id}>
+                                    {trip.title}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* ADD ITEM */}
+                    <div
+                        className="
+                            bg-white
+                            border
+                            border-slate-200
+                            rounded-3xl
+                            p-6
+                            mb-8
+                            max-w-4xl
+                        "
+                    >
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <input
+                                type="text"
+                                value={newItem}
+                                onChange={(e) => setNewItem(e.target.value)}
+                                placeholder="Add checklist item..."
                                 className="
-                                    flex
-                                    items-center
-                                    justify-between
-                                    gap-4
-                                    p-5
-                                    rounded-2xl
+                                    flex-1
                                     border
                                     border-slate-200
-                                    hover:bg-slate-50
+                                    rounded-2xl
+                                    px-5
+                                    py-4
+                                    outline-none
+                                    focus:ring-2
+                                    focus:ring-emerald-400
+                                "
+                            />
+
+                            <button
+                                onClick={handleAddItem}
+                                disabled={saving || !newItem.trim()}
+                                className="
+                                    bg-emerald-500
+                                    hover:bg-emerald-600
+                                    disabled:bg-emerald-300
+                                    text-white
+                                    px-6
+                                    py-4
+                                    rounded-2xl
+                                    font-medium
+                                    flex
+                                    items-center
+                                    justify-center
+                                    gap-2
                                     transition
                                 "
                             >
-                                <label className="flex items-center gap-4 flex-1 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={item.completed}
-                                        onChange={() => handleToggle(item.id)}
-                                        className="
-                                            h-5
-                                            w-5
-                                            accent-emerald-500
-                                        "
-                                    />
+                                <Plus size={18} />
 
-                                    <span
-                                        className={`text-lg font-medium ${
-                                            item.completed
-                                                ? "line-through text-slate-400"
-                                                : "text-slate-700"
-                                        }`}
-                                    >
-                                        {item.title}
-                                    </span>
-                                </label>
-
-                                <button
-                                    onClick={() => handleDelete(item.id)}
-                                    className="
-                                        h-11
-                                        w-11
-                                        rounded-xl
-                                        bg-red-50
-                                        hover:bg-red-100
-                                        text-red-500
-                                        flex
-                                        items-center
-                                        justify-center
-                                        transition
-                                    "
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                        ))}
+                                {saving ? "Adding..." : "Add Item"}
+                            </button>
+                        </div>
                     </div>
-                </div>
+
+                    {/* LOADING */}
+                    {loading ? (
+                        <div className="py-20 text-center">
+                            <p className="text-slate-500 text-lg">
+                                Loading checklist...
+                            </p>
+                        </div>
+                    ) : items.length === 0 ? (
+                        <div
+                            className="
+                                bg-white
+                                border
+                                border-slate-200
+                                rounded-3xl
+                                p-16
+                                text-center
+                                max-w-4xl
+                            "
+                        >
+                            <h2 className="text-3xl font-bold mb-4">
+                                Checklist Empty
+                            </h2>
+
+                            <p className="text-slate-500">
+                                Add travel essentials for your trip.
+                            </p>
+                        </div>
+                    ) : (
+                        <div
+                            className="
+                                bg-white
+                                border
+                                border-slate-200
+                                rounded-3xl
+                                p-8
+                                max-w-4xl
+                            "
+                        >
+                            <div className="space-y-4">
+                                {items.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="
+                                                flex
+                                                items-center
+                                                justify-between
+                                                gap-4
+                                                p-5
+                                                rounded-2xl
+                                                border
+                                                border-slate-200
+                                                hover:bg-slate-50
+                                                transition
+                                            "
+                                    >
+                                        <label className="flex items-center gap-4 flex-1 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={item.checked}
+                                                onChange={() =>
+                                                    handleToggle(item.id)
+                                                }
+                                                className="
+                                                h-5
+                                                w-5
+                                                 accent-emerald-500
+                                                "
+                                            />
+
+                                            <span
+                                                className={`text-lg font-medium ${
+                                                    item.checked
+                                                        ? "line-through text-slate-400"
+                                                        : "text-slate-700"
+                                                }`}
+                                            >
+                                                {item.label}
+                                            </span>
+                                        </label>
+
+                                        <button
+                                            onClick={() =>
+                                                handleDelete(item.id)
+                                            }
+                                            className="
+                                                    h-11
+                                                    w-11
+                                                    rounded-xl
+                                                    bg-red-50
+                                                    hover:bg-red-100
+                                                    text-red-500
+                                                    flex
+                                                    items-center
+                                                    justify-center
+                                                    transition
+                                                "
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </MainLayout>
     );

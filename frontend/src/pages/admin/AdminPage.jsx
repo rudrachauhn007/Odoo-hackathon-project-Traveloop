@@ -13,6 +13,20 @@ import {
     Trash2,
 } from "lucide-react";
 
+import {
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    Tooltip as RechartsTooltip,
+    Legend,
+    LineChart,
+    Line,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+} from "recharts";
+
 function AdminPage() {
     const user = useAuthStore((state) => state.user);
 
@@ -145,14 +159,20 @@ function AdminPage() {
 
     const maxValue = Math.max(...chartData.map((item) => item.value), 1);
 
+    const COLORS = ["#10b981", "#14b8a6", "#0f172a", "#64748b", "#22c55e"];
+
+    const destinationPieData = analytics?.destinationDistribution || [];
+
+    const activityCostData = analytics?.dailyExpenses || [];
+
     return (
         <MainLayout>
             {/* HEADER */}
             <div className="mb-10">
-                <h1 className="text-5xl font-bold mb-3">Admin Dashboard </h1>
+                <h1 className="text-5xl font-bold mb-3">Admin Dashboard 📊</h1>
 
                 <p className="text-slate-500 text-lg">
-                    Monitor platform analytics and user activity based on User data.
+                    Monitor platform analytics and user activity.
                 </p>
             </div>
 
@@ -198,7 +218,7 @@ function AdminPage() {
                 })}
             </div>
 
-            {/* CHART */}
+            {/* ANALYTICS BAR */}
             <div
                 className="
                     bg-white
@@ -254,14 +274,14 @@ function AdminPage() {
                                 <div className="h-5 bg-slate-100 rounded-full overflow-hidden">
                                     <div
                                         className="
-                                            h-full
-                                            bg-gradient-to-r
-                                            from-emerald-500
-                                            to-teal-500
-                                            rounded-full
-                                            transition-all
-                                            duration-700
-                                        "
+                                                h-full
+                                                bg-gradient-to-r
+                                                from-emerald-500
+                                                to-teal-500
+                                                rounded-full
+                                                transition-all
+                                                duration-700
+                                            "
                                         style={{
                                             width: `${width}%`,
                                         }}
@@ -273,50 +293,55 @@ function AdminPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {/* RECENT USERS */}
+            {/* USERS + POPULAR */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
+                {/* USERS */}
                 <div className="bg-white border border-slate-200 rounded-3xl p-8">
                     <h2 className="text-2xl font-bold mb-8">Recent Users</h2>
 
                     <div className="space-y-5">
-                        {analytics?.recentUsers?.map((user) => (
-                            <div
-                                key={user.id}
-                                className="
-                                        flex
-                                        items-center
-                                        gap-4
-                                        border
-                                        border-slate-200
-                                        rounded-2xl
-                                        p-4
-                                    "
-                            >
-                                <img
-                                    src={
-                                        user.profileImage ||
-                                        "https://i.pravatar.cc/150"
-                                    }
-                                    alt="user"
+                        {analytics?.recentUsers?.length === 0 ? (
+                            <p className="text-slate-500">No users found.</p>
+                        ) : (
+                            analytics?.recentUsers?.map((user) => (
+                                <div
+                                    key={user.id}
                                     className="
-                                            h-14
-                                            w-14
-                                            rounded-full
-                                            object-cover
+                                            flex
+                                            items-center
+                                            gap-4
+                                            border
+                                            border-slate-200
+                                            rounded-2xl
+                                            p-4
                                         "
-                                />
+                                >
+                                    <img
+                                        src={
+                                            user.profileImage ||
+                                            "https://i.pravatar.cc/150"
+                                        }
+                                        alt="user"
+                                        className="
+                                                h-14
+                                                w-14
+                                                rounded-full
+                                                object-cover
+                                            "
+                                    />
 
-                                <div>
-                                    <h3 className="font-semibold">
-                                        {user.fullName}
-                                    </h3>
+                                    <div>
+                                        <h3 className="font-semibold">
+                                            {user.fullName}
+                                        </h3>
 
-                                    <p className="text-sm text-slate-500">
-                                        {user.email}
-                                    </p>
+                                        <p className="text-sm text-slate-500">
+                                            {user.email}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
 
@@ -325,99 +350,113 @@ function AdminPage() {
                     <h2 className="text-2xl font-bold mb-8">Popular Trips</h2>
 
                     <div className="space-y-5">
-                        {analytics?.popularTrips?.map((trip) => (
+                        {analytics?.popularTrips?.length === 0 ? (
+                            <p className="text-slate-500">No trips found.</p>
+                        ) : (
+                            analytics?.popularTrips?.map((trip) => (
+                                <div
+                                    key={trip.id}
+                                    className="
+                                            border
+                                            border-slate-200
+                                            rounded-2xl
+                                            p-5
+                                        "
+                                >
+                                    <div className="flex items-center justify-between gap-4">
+                                        <div>
+                                            <h3 className="font-semibold text-lg">
+                                                {trip.title}
+                                            </h3>
+
+                                            <p className="text-sm text-slate-500 mt-1">
+                                                By {trip.user?.fullName}
+                                            </p>
+
+                                            <p className="text-emerald-600 font-medium mt-2">
+                                                ❤️ {trip.likesCount} Likes
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            onClick={() =>
+                                                handleDeleteTrip(trip.id)
+                                            }
+                                            className="
+                                                    bg-red-500
+                                                    hover:bg-red-600
+                                                    text-white
+                                                    p-3
+                                                    rounded-xl
+                                                    transition
+                                                "
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* RECENT TRIPS */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 mb-10">
+                <h2 className="text-2xl font-bold mb-8">Recent Trips</h2>
+
+                <div className="space-y-5">
+                    {analytics?.recentTrips?.length === 0 ? (
+                        <p className="text-slate-500">No recent trips.</p>
+                    ) : (
+                        analytics?.recentTrips?.map((trip) => (
                             <div
                                 key={trip.id}
                                 className="
+                                        flex
+                                        items-center
+                                        justify-between
                                         border
                                         border-slate-200
                                         rounded-2xl
                                         p-5
                                     "
                             >
-                                <div className="flex items-center justify-between gap-4">
-                                    <div>
-                                        <h3 className="font-semibold text-lg">
-                                            {trip.title}
-                                        </h3>
+                                <div>
+                                    <h3 className="font-semibold text-lg">
+                                        {trip.title}
+                                    </h3>
 
-                                        <p className="text-sm text-slate-500 mt-1">
-                                            By {trip.user?.fullName}
-                                        </p>
+                                    <p className="text-sm text-slate-500 mt-1">
+                                        Created by {trip.user?.fullName}
+                                    </p>
+                                </div>
 
-                                        <p className="text-emerald-600 font-medium mt-2">
-                                            ❤️ {trip.likesCount} Likes
-                                        </p>
-                                    </div>
+                                <div className="text-right">
+                                    <p className="text-sm text-slate-400">
+                                        {new Date(
+                                            trip.createdAt,
+                                        ).toLocaleDateString()}
+                                    </p>
 
-                                    <button
-                                        onClick={() =>
-                                            handleDeleteTrip(trip.id)
-                                        }
-                                        className="
-                                                bg-red-500
-                                                hover:bg-red-600
-                                                text-white
-                                                p-3
-                                                rounded-xl
-                                                transition
-                                            "
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
+                                    <p className="text-emerald-600 font-medium mt-1">
+                                        {trip.isPublic ? "Public" : "Private"}
+                                    </p>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        ))
+                    )}
                 </div>
             </div>
 
-            {/* RECENT TRIPS */}
-            <div className="mt-10 bg-white border border-slate-200 rounded-3xl p-8">
-                <h2 className="text-2xl font-bold mb-8">Recent Trips</h2>
-
-                <div className="space-y-5">
-                    {analytics?.recentTrips?.map((trip) => (
-                        <div
-                            key={trip.id}
-                            className="
-                                    flex
-                                    items-center
-                                    justify-between
-                                    border
-                                    border-slate-200
-                                    rounded-2xl
-                                    p-5
-                                "
-                        >
-                            <div>
-                                <h3 className="font-semibold text-lg">
-                                    {trip.title}
-                                </h3>
-
-                                <p className="text-sm text-slate-500 mt-1">
-                                    Created by {trip.user?.fullName}
-                                </p>
-                            </div>
-
-                            <div className="text-right">
-                                <p className="text-sm text-slate-400">
-                                    {new Date(
-                                        trip.createdAt,
-                                    ).toLocaleDateString()}
-                                </p>
-
-                                <p className="text-emerald-600 font-medium mt-1">
-                                    {trip.isPublic ? "Public" : "Private"}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Pie Chart: Popular Destinations */}
+            {/* CHARTS */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                {/* PIE */}
                 <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                    <h2 className="text-2xl font-bold mb-6 text-slate-800">Destination Distribution</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-slate-800">
+                        Destination Distribution
+                    </h2>
+
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -431,38 +470,50 @@ function AdminPage() {
                                     dataKey="value"
                                 >
                                     {destinationPieData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={COLORS[index % COLORS.length]}
+                                        />
                                     ))}
                                 </Pie>
-                                <RechartsTooltip
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                />
-                                <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+
+                                <RechartsTooltip />
+
+                                <Legend />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
-                {/* Line Chart: Itinerary Costs */}
+                {/* LINE */}
                 <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                    <h2 className="text-2xl font-bold mb-6 text-slate-800">Daily Activity Expenses</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-slate-800">
+                        Daily Activity Expenses
+                    </h2>
+
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={activityCostData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b' }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b' }} tickFormatter={(value) => `₹${value}`} />
-                                <RechartsTooltip
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                    formatter={(value) => `₹${value.toLocaleString()}`}
-                                />
+                            <LineChart data={activityCostData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+
+                                <XAxis dataKey="day" />
+
+                                <YAxis />
+
+                                <RechartsTooltip />
+
                                 <Legend />
-                                <Line type="monotone" dataKey="cost" name="Total Daily Cost" stroke="#10b981" strokeWidth={3} dot={{ r: 6, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 8 }} />
+
+                                <Line
+                                    type="monotone"
+                                    dataKey="cost"
+                                    stroke="#10b981"
+                                    strokeWidth={3}
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-
             </div>
         </MainLayout>
     );
