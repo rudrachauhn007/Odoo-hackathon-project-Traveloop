@@ -15,6 +15,10 @@ import SettingsPage from "../pages/profile/SettingsPage";
 
 import AdminPage from "../pages/admin/AdminPage";
 
+import CreateTripPage from "../pages/trips/CreateTripPage";
+
+import TripDetailsPage from "../pages/trips/TripDetailsPage";
+
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -25,7 +29,10 @@ function AppRoutes() {
 
                 <Route path="/dashboard" element={<DashboardPage />} />
 
+                {/* Trip Routes */}
                 <Route path="/trips" element={<MyTripsPage />} />
+                <Route path="/create-trip" element={<CreateTripPage />} />
+                <Route path="/trip/:id" element={<TripDetailsPage />} />
 
                 <Route path="/itinerary" element={<ItineraryPage />} />
 
