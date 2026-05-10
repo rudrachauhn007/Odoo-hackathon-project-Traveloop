@@ -134,7 +134,7 @@ function ItineraryPage() {
                     </h1>
 
                     <p className="text-slate-500 text-lg">
-                        Organize your trip day by day.
+                        Organize your trip day by day and track it on the live map.
                     </p>
                 </div>
 

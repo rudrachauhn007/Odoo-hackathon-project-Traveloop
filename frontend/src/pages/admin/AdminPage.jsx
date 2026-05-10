@@ -149,10 +149,10 @@ function AdminPage() {
         <MainLayout>
             {/* HEADER */}
             <div className="mb-10">
-                <h1 className="text-5xl font-bold mb-3">Admin Dashboard 📊</h1>
+                <h1 className="text-5xl font-bold mb-3">Admin Dashboard </h1>
 
                 <p className="text-slate-500 text-lg">
-                    Monitor platform analytics and user activity.
+                    Monitor platform analytics and user activity based on User data.
                 </p>
             </div>
 
@@ -412,8 +412,57 @@ function AdminPage() {
                                 </p>
                             </div>
                         </div>
-                    ))}
+                    </div>
                 </div>
+
+                {/* Pie Chart: Popular Destinations */}
+                <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                    <h2 className="text-2xl font-bold mb-6 text-slate-800">Destination Distribution</h2>
+                    <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={destinationPieData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={80}
+                                    outerRadius={120}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {destinationPieData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <RechartsTooltip
+                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Line Chart: Itinerary Costs */}
+                <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                    <h2 className="text-2xl font-bold mb-6 text-slate-800">Daily Activity Expenses</h2>
+                    <div className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={activityCostData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b' }} tickFormatter={(value) => `₹${value}`} />
+                                <RechartsTooltip
+                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                    formatter={(value) => `₹${value.toLocaleString()}`}
+                                />
+                                <Legend />
+                                <Line type="monotone" dataKey="cost" name="Total Daily Cost" stroke="#10b981" strokeWidth={3} dot={{ r: 6, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 8 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
             </div>
         </MainLayout>
     );

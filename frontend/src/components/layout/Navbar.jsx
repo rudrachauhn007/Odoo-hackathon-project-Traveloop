@@ -44,7 +44,7 @@ function Navbar() {
 
                         <p className="text-sm text-slate-500">Traveler</p>
                     </div>
-                </div>
+                </Link>
             </div>
         </header>
     );

@@ -57,7 +57,6 @@ function NotesPage() {
         <MainLayout>
             <div className="mb-10">
                 <h1 className="text-5xl font-bold mb-3">Travel Notes 📝</h1>
-
                 <p className="text-slate-500 text-lg">
                     Save reminders, hotel details and important information.
                 </p>
@@ -73,6 +72,8 @@ function NotesPage() {
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Write your notes here..."
+                        value={newNote}
+                        onChange={(e) => setNewNote(e.target.value)}
                         className="
                             w-full
                             border
